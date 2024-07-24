@@ -14,7 +14,7 @@ const Wordle: React.FC = () => {
   const [guesses, setGuesses] = useState<string[]>(Array(7).fill(''));
   const [currentGuess, setCurrentGuess] = useState('');
   const [message, setMessage] = useState('');
-  const [isWinner, setIsWinner] = useState(false);
+  const [isWinner, setIsWinner] = useState(false); // dont' need
   const [isGameOver, setIsGameOver] = useState(false);
 
   // Clear message when guesses or solution change
@@ -32,6 +32,26 @@ const Wordle: React.FC = () => {
     setIsGameOver(false);
   };
 
+  const isValidHardModeGuess = (guesses: string[], currentGuess: string)=> {
+    const newGuesses = [...guesses];
+    const emptyIndex = newGuesses.findIndex(guess => guess === '');
+    if (emptyIndex === 0 ){
+      return true;
+    }
+
+    const lastGuess = newGuesses[emptyIndex - 1];
+    
+    for (let index = 0; index <= 5; index++){ // (SOLUTION: DRAPE) BRICK  ---> CRANE 
+      if(solution[index] === lastGuess[index] && lastGuess[index] !== currentGuess[index]){
+        return false;
+      } else if (solution.includes(lastGuess[index]) && !currentGuess.includes(lastGuess[index])){ 
+        return false;
+      }
+    }
+
+    return true;
+  }
+
   // Validate the current guess
   const handleGuess = async () => {
     if (isGameOver || currentGuess.length !== 5) {
@@ -44,6 +64,12 @@ const Wordle: React.FC = () => {
       return;
     }
 
+    // hard mode begins...
+    if (!isValidHardModeGuess(guesses, currentGuess)){
+      setMessage('Word does not pass hard mode rules...')
+      return;
+    }
+
     const isValid = await validateWord(currentGuess);
     if (isValid) {
       const newGuesses = [...guesses];
@@ -52,7 +78,7 @@ const Wordle: React.FC = () => {
         newGuesses[emptyIndex] = currentGuess;
         setGuesses(newGuesses);
       }
-
+  
       if (currentGuess === solution) {
         setMessage('You win!');
         setIsWinner(true);

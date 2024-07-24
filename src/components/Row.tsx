@@ -18,7 +18,8 @@ type LetterType = {
   status: TileStatusType;
 }
 
-function Row({guess, solution}: RowPropsType) {
+function Row({guess, solution}: RowPropsType) { 
+
   // parse the guess and solution to determine the status of each letter
   const tiles = Array.from({length: 5}, (_, index): LetterType => {
     let status: TileStatusType = 'empty';
@@ -44,3 +45,7 @@ function Row({guess, solution}: RowPropsType) {
 }
 
 export default Row;
+
+// hard mode:
+//green always in same place
+// yellow within the guess
